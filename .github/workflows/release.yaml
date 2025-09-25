@@ -8,7 +8,6 @@ on:
 permissions:
   contents: read
 
-		# if: '${{ github.repository_owner == 'found-it' }}'
 jobs:
   # Create a PR with the new versions and changelog, preparing the next release.
   release-plz-pr:

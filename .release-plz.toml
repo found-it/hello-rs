@@ -1,5 +1,4 @@
 [workspace]
-git_release_enable = true 
 pr_branch_prefix = "release/"
 pr_labels = ["release"] 
 release_always = false

@@ -41,7 +41,8 @@ jobs:
           git tag "$TAG"
           git push origin "$TAG"
 
-      - uses: rust-lang/crates-io-auth-action@v1 id: auth
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
 
       - run: cargo publish
         env:

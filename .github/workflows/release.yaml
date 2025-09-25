@@ -8,12 +8,13 @@ on:
 permissions:
   contents: read
 
+		# if: '${{ github.repository_owner == 'found-it' }}'
 jobs:
   # Create a PR with the new versions and changelog, preparing the next release.
   release-plz-pr:
+    if: ${{ github.repository_owner == 'found-it' }}
     name: Release-plz PR
     runs-on: ubuntu-latest
-		if: '${{ github.repository_owner == 'found-it' }}'
     permissions:
       contents: write
       pull-requests: write

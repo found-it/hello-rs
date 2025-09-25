@@ -1,17 +1,57 @@
-name: Publish to crates.io
+name: Release Crate
+
 on:
-  push:
-    tags: ['v*']  # Triggers when pushing tags starting with 'v'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
-    environment: release  # Optional: for enhanced security
     permissions:
-      id-token: write     # Required for OIDC token exchange
+      contents: write
     steps:
-    - uses: actions/checkout@v5
-    - uses: rust-lang/crates-io-auth-action@v1
-      id: auth
-    - run: cargo publish
-      env:
-        CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Get crate version
+        id: crate
+        run: |
+          VERSION=$(cargo pkgid | sed 's/.*#//' | cut -d@ -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if tag exists
+        run: |
+          TAG="v${{ steps.crate.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "❌ Tag $TAG already exists"
+            echo "You likely forgot to bump the version in Cargo.toml"
+            exit 1
+          fi
+
+      - name: Create and push tag
+        run: |
+          TAG="v${{ steps.crate.outputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+      - uses: rust-lang/crates-io-auth-action@v1 id: auth
+
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.crate.outputs.version }}"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "Release $TAG of $GITHUB_REPOSITORY"

@@ -64,7 +64,6 @@ jobs:
   upload-artifact:
     if: ${{ github.repository_owner == 'found-it' && github.event_name == 'release' }}
     name: Upload artifacts
-    runs-on: ubuntu-latest
     permissions:
       contents: write
     strategy:

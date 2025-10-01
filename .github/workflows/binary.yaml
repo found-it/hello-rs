@@ -1,0 +1,53 @@
+name: Binary
+
+on:
+  release:
+    types:
+    - published
+
+permissions:
+  contents: read
+
+jobs:
+  upload-artifact:
+    if: ${{ github.repository_owner == 'found-it' }}
+    name: Upload artifacts
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { os: linux, arch: x86_64, on: ubuntu-latest, deps: linux }
+    env:
+      TARGET_OS: '${{ matrix.platform.os }}'
+      TARGET_ARCH: '${{ matrix.platform.arch }}'
+    runs-on: '${{ matrix.platform.on }}'
+    steps:
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: build
+        run: cargo build --release
+      - name: 'Assemble hello-rs executable'
+        run: |
+          tag_name='${{ github.event.release.tag_name }}'
+          [ -z $tag_name ] && tag_name='${{ github.event.repository.default_branch }}'
+
+          ./hack/ci/assemble-release-assets.sh \
+            protect-ctl \
+            ${tag_name} \
+            ${{ matrix.platform.os }}-${{ matrix.platform.arch }} \
+            target/*/release
+
+      - name: 'Upload protect-ctl to workflow run'
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: protect-ctl-${{ matrix.platform.os }}-${{ matrix.platform.arch }}
+          path: |
+            target/assets/*
+
+      - name: 'Upload all release artifacts'
+        run: |
+          ./hack/ci/upload-release-assets.sh ${{ github.event.release.tag_name }}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

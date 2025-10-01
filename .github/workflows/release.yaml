@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  # Official stable versioned release
   release:
     types:
     - published
@@ -61,10 +60,6 @@ jobs:
           command: release-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 'Cargo build protect-ctl'
-      run: |
-        ./hack/build/cargo.sh build --release --bin protect-ctl
 
   upload-artifact:
     if: ${{ github.repository_owner == 'found-it' && github.event_name == 'release' }}

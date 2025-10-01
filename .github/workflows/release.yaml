@@ -9,7 +9,6 @@ permissions:
   contents: read
 
 jobs:
-  # Release unpublished packages.
   release-plz-release:
     name: Release-plz release
     runs-on: ubuntu-latest
@@ -30,7 +29,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Create a PR with the new versions and changelog, preparing the next release.
   release-plz-pr:
     if: ${{ github.repository_owner == 'found-it' }}
     name: Release-plz PR

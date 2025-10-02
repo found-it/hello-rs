@@ -39,15 +39,15 @@ jobs:
           [ -z $tag_name ] && tag_name='${{ github.event.repository.default_branch }}'
 
           ./hack/ci/assemble-release-assets.sh \
-            protect-ctl \
+            hello \
             ${tag_name} \
             ${{ matrix.platform.os }}-${{ matrix.platform.arch }} \
             target/*/release
 
-      - name: 'Upload protect-ctl to workflow run'
+      - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
-          name: protect-ctl-${{ matrix.platform.os }}-${{ matrix.platform.arch }}
+          name: hello-${{ matrix.platform.os }}-${{ matrix.platform.arch }}
           path: |
             target/assets/*
 

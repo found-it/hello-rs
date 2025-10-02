@@ -24,6 +24,11 @@ jobs:
       TARGET_ARCH: '${{ matrix.platform.arch }}'
     runs-on: '${{ matrix.platform.on }}'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: build

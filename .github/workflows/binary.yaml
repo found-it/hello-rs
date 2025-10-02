@@ -42,7 +42,7 @@ jobs:
             hello \
             ${tag_name} \
             ${{ matrix.platform.os }}-${{ matrix.platform.arch }} \
-            target/*/release
+            target/release
 
       - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0

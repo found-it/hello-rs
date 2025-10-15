@@ -18,6 +18,7 @@ asset() {
   cd "${previous}"
 }
 
+env | grep EDERA
 if [ -z ${EDERA_ASSEMBLE_FORM} ]; then
   echo "EDERA_ASSEMBLE_FORM env is missing"
   exit 1

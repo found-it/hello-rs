@@ -52,7 +52,7 @@ jobs:
             target/assets/*
       - name: 'Upload all release artifacts'
         run: |
-          HELLO_ASSET_TAG='${{ github.event.release.tag_name }}'
+          HELLO_TAG_NAME='${{ github.event.release.tag_name }}'
           cargo make upload-release-assets
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

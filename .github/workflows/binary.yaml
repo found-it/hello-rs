@@ -34,7 +34,7 @@ jobs:
       - name: Install cargo-make
         run: cargo install cargo-make
       - name: build
-        run: cargo make build
+        run: cargo make --profile release build
       - name: 'Assemble hello-rs executable'
         run: |
           tag_name='${{ github.event.release.tag_name }}'
@@ -43,7 +43,7 @@ jobs:
           export EDERA_ASSEMBLE_TAG_NAME="${tag_name}"
           export EDERA_ASSEMBLE_PLATFORM='${{ matrix.platform.os }}-${{ matrix.platform.arch }}'
           export EDERA_ASSEMBLE_RELEASE_DIR='target/release'
-          cargo make assemble-release-assets 
+          cargo make --profile release assemble-release-assets 
       - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
@@ -53,6 +53,6 @@ jobs:
       - name: 'Upload all release artifacts'
         run: |
           export HELLO_TAG_NAME='${{ github.event.release.tag_name }}'
-          cargo make upload-release-assets
+          cargo make --profile release upload-release-assets
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

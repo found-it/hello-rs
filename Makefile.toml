@@ -1,21 +1,18 @@
+#
+# Cargo Make Configuration
+#
 [config]
 reduce_output = false
+skip_core_tasks = true
 
 #
 # Environment and Profile Setup
 #
-
 [env]
-CARGO_BUILD_RUSTFLAGS = ""
-# EDERA_ASSEMBLE_FORM = { value = "hello", condition = { env_not_set = ["EDERA_ASSEMBLE_FORM"]} }
-# EDERA_ASSEMBLE_TAG_NAME = { value = "unknown", condition = { env_not_set = ["EDERA_ASSEMBLE_TAG_NAME"]} }
-# EDERA_ASSEMBLE_PLATFORM = { value = "linux", condition = { env_not_set = ["EDERA_ASSEMBLE_PLATFORM"]} }
-# EDERA_ASSEMBLE_RELEASE_DIR = { value = "target/release", condition = { env_not_set = ["EDERA_ASSEMBLE_RELEASE_DIR"]} }
-# HELLO_TAG_NAME = { value = "unknown", condition = { env_not_set = ["HELLO_TAG_NAME"]} }
-
+HELLO_BUILD_FLAGS = ""
 
 [env.release]
-CARGO_BUILD_RUSTFLAGS = "--release"
+HELLO_BUILD_FLAGS = "--release"
 
 #
 # Tasks
@@ -31,14 +28,31 @@ args = ["clean"]
 
 [tasks.build]
 command = "cargo"
-args = ["build", "--release"]
+args = ["build", "@@split(HELLO_BUILD_FLAGS, )"]
 
 [tasks.test]
 command = "cargo"
 args = ["test"]
 
+[tasks.assets-exist]
+script = '''
+if [ ! -d ./target/assets ]; then
+  echo "./target/assets does not exist"
+  exit 1
+fi
+'''
+
+[tasks.release-exists]
+script = '''
+if [ ! -d ./target/release ]; then
+  echo "./target/release does not exist"
+  exit 1
+fi
+'''
+
 [tasks.assemble-release-assets]
 command = "./hack/ci/assemble-release-assets.sh"
+dependencies = ["release-exists"]
 
 [tasks.check-gh-installed]
 command = "which"
@@ -46,4 +60,4 @@ args = ["gh"]
 
 [tasks.upload-release-assets]
 command = "./hack/ci/upload-release-assets.sh"
-dependencies = ["check-gh-installed"]
+dependencies = ["check-gh-installed", "assets-exist"]

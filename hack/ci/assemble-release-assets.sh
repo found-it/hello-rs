@@ -11,23 +11,43 @@ checksum_sha256() {
 
 asset() {
   cp "${1}" "${2}"
-  PREVIOUS="${PWD}"
+  previous="${PWD}"
   cd "$(dirname "${2}")"
-  BASE_FILE_NAME="$(basename "${2}")"
-  checksum_sha256 "${BASE_FILE_NAME}" >"${BASE_FILE_NAME}.sha256"
-  cd "${PREVIOUS}"
+  base_file_name="$(basename "${2}")"
+  checksum_sha256 "${base_file_name}" >"${base_file_name}.sha256"
+  cd "${previous}"
 }
 
-FORM="${1}"
-shift
-TAG_NAME="${1}"
-shift
-PLATFORM="${1}"
-shift
+if [ -z ${EDERA_ASSEMBLE_FORM} ]; then
+  echo "EDERA_ASSEMBLE_FORM env is missing"
+  exit 1
+fi
+
+if [ -z ${EDERA_ASSEMBLE_TAG_NAME} ]; then
+  echo "EDERA_ASSEMBLE_TAG_NAME env is missing"
+  exit 1
+fi
+
+if [ -z ${EDERA_ASSEMBLE_PLATFORM} ]; then
+  echo "EDERA_ASSEMBLE_PLATFORM env is missing"
+  exit 1
+fi
+
+if [ -z ${EDERA_ASSEMBLE_RELEASE_DIR} ]; then
+  echo "EDERA_ASSEMBLE_RELEASE_DIR env is missing"
+  exit 1
+fi
+
+FORM="${EDERA_ASSEMBLE_FORM}"
+TAG_NAME="${EDERA_ASSEMBLE_TAG_NAME}"
+PLATFORM="${EDERA_ASSEMBLE_PLATFORM}"
+
+env | grep EDERA
 
 mkdir -p target/assets
 
-for SOURCE_FILE_PATH in "${@}"; do
+for SOURCE_FILE_PATH in "${EDERA_ASSEMBLE_RELEASE_DIR}"; do
+  echo "handling $SOURCE_FILE_PATH"
   if [ "${FORM}" = "hello" ]; then
     SUFFIX=""
     if echo "${PLATFORM}" | grep "^windows-" >/dev/null; then

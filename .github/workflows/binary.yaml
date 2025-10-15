@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { os: linux, arch: x86_64, on: ubuntu-latest, deps: linux }
+        - { os: linux, arch: x86_64, on: ubuntu-latest }
     env:
       TARGET_OS: '${{ matrix.platform.os }}'
       TARGET_ARCH: '${{ matrix.platform.arch }}'
@@ -31,28 +31,28 @@ jobs:
           persist-credentials: false
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-make
+        run: cargo install cargo-make
       - name: build
-        run: cargo build --release
+        run: cargo make build
       - name: 'Assemble hello-rs executable'
         run: |
           tag_name='${{ github.event.release.tag_name }}'
           [ -z $tag_name ] && tag_name='${{ github.event.repository.default_branch }}'
-
-          ./hack/ci/assemble-release-assets.sh \
-            hello \
-            ${tag_name} \
-            ${{ matrix.platform.os }}-${{ matrix.platform.arch }} \
-            target/release
-
+          cargo make assemble-release-assets \
+            --env EDERA_ASSEMBLE_FORM='hello' \
+            --env EDERA_ASSEMBLE_TAG_NAME="${tag_name}" \
+            --env EDERA_ASSEMBLE_PLATFORM='${{ matrix.platform.os }}-${{ matrix.platform.arch }}' \
+            --env EDERA_ASSEMBLE_RELEASE_DIR='target/release'
       - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: hello-${{ matrix.platform.os }}-${{ matrix.platform.arch }}
           path: |
             target/assets/*
-
       - name: 'Upload all release artifacts'
         run: |
-          ./hack/ci/upload-release-assets.sh ${{ github.event.release.tag_name }}
+          cargo make upload-release-assets \
+            --env HELLO_ASSET_TAG='${{ github.event.release.tag_name }}'
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

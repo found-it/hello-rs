@@ -7,11 +7,11 @@ reduce_output = false
 
 [env]
 CARGO_BUILD_RUSTFLAGS = ""
-EDERA_ASSEMBLE_FORM = { value = "hello", condition = { env_not_set = ["EDERA_ASSEMBLE_FORM"]} }
-EDERA_ASSEMBLE_TAG_NAME = { value = "unknown", condition = { env_not_set = ["EDERA_ASSEMBLE_TAG_NAME"]} }
-EDERA_ASSEMBLE_PLATFORM = { value = "linux", condition = { env_not_set = ["EDERA_ASSEMBLE_PLATFORM"]} }
-EDERA_ASSEMBLE_RELEASE_DIR = { value = "target/release", condition = { env_not_set = ["EDERA_ASSEMBLE_RELEASE_DIR"]} }
-HELLO_TAG_NAME = { value = "unknown", condition = { env_not_set = ["HELLO_TAG_NAME"]} }
+# EDERA_ASSEMBLE_FORM = { value = "hello", condition = { env_not_set = ["EDERA_ASSEMBLE_FORM"]} }
+# EDERA_ASSEMBLE_TAG_NAME = { value = "unknown", condition = { env_not_set = ["EDERA_ASSEMBLE_TAG_NAME"]} }
+# EDERA_ASSEMBLE_PLATFORM = { value = "linux", condition = { env_not_set = ["EDERA_ASSEMBLE_PLATFORM"]} }
+# EDERA_ASSEMBLE_RELEASE_DIR = { value = "target/release", condition = { env_not_set = ["EDERA_ASSEMBLE_RELEASE_DIR"]} }
+# HELLO_TAG_NAME = { value = "unknown", condition = { env_not_set = ["HELLO_TAG_NAME"]} }
 
 
 [env.release]

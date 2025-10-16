@@ -10,6 +10,16 @@ skip_core_tasks = true
 #
 [env]
 HELLO_BUILD_FLAGS = ""
+# TODO(found-it): support more than just linux when it makes sense
+TARGET_ARCH = { condition.env_not_set = ["TARGET_ARCH"], value = "x86_64" }
+TARGET_LIBC = { condition.env_not_set = ["TARGET_LIBC"], value = "musl" }
+TARGET_VENDOR = { condition.env_not_set = ["TARGET_VENDOR"], value = "unknown" }
+CARGO_BUILD_TARGET = { condition.env_not_set = [
+  "CARGO_BUILD_TARGET",
+], value = "${TARGET_ARCH}-${TARGET_VENDOR}-linux-${TARGET_LIBC}" }
+RUSTFLAGS = { condition.env_not_set = [
+  "RUSTFLAGS",
+], value = "-Ctarget-feature=+crt-static" }
 
 [env.release]
 HELLO_BUILD_FLAGS = "--release"
@@ -36,16 +46,28 @@ args = ["fmt", "--all", "--", "--check"]
 command = "cargo"
 args = ["clean"]
 
+[tasks.echo]
+script = '''
+echo $CARGO_BUILD_TARGET
+'''
+
 [tasks.build]
 command = "cargo"
-args = ["build", "@@split(STYROLITE_BUILD_FLAGS, )"]
+args = ["build", "@@split(HELLO_BUILD_FLAGS, )"]
 
 [tasks.test]
 command = "cargo"
 args = ["test"]
 
 [tasks.ci]
-dependencies = ["format-check", "clippy", "build", "test"]
+dependencies = [
+  "format-check",
+  "clippy",
+  "build",
+  "test",
+  "shellcheck",
+  "shfmt",
+]
 
 [tasks.shellcheck-exists]
 script = '''

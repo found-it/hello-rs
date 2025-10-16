@@ -9,6 +9,34 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch latest cargo-make version (from crates.io)
+        id: get-version
+        run: |
+          VERSION=$(curl -s \
+            -H "User-Agent: github.com/found-it/hello-rs (contact: jpetersenames@gmail.com)" \
+            https://crates.io/api/v1/crates/cargo-make | jq -r '.crate.max_stable_version')
+          echo "cargo_make_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo-make binary
+        id: cache-cargo-make
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-make
+          key: ${{ runner.os }}-cargo-make-${{ steps.get-version.outputs.cargo_make_version }}
+
+      - name: Install cargo-make if missing or outdated
+        if: steps.cache-cargo-make.outputs.cache-hit != 'true'
+        run: |
+          echo "Installing cargo-make ${{ steps.get-version.outputs.cargo_make_version }}"
+          cargo install cargo-make --version ${{ steps.get-version.outputs.cargo_make_version }} --force
+
   upload-artifact:
     if: ${{ github.repository_owner == 'found-it' }}
     name: Upload artifacts

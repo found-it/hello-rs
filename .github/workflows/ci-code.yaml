@@ -99,6 +99,7 @@ jobs:
         if ! cargo make shfmt; then
           echo ""
           echo "Please run \`cargo make shfmt-write\`"
+          exit 1
         fi
 
   shellcheck:

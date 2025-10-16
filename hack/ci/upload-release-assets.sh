@@ -12,7 +12,7 @@ retry() {
   "${@}"
 }
 
-if [ -z ${HELLO_TAG_NAME} ]; then
+if [ -z "${HELLO_TAG_NAME}" ]; then
   echo "HELLO_TAG_NAME env is missing"
   exit 1
 fi

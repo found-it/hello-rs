@@ -31,6 +31,7 @@ HELLO_BUILD_FLAGS = "--release"
 install_crate = "clippy"
 command = "cargo"
 args = ["clippy"]
+dependencies = ["rustup-target-add"]
 
 [tasks.format]
 install_crate = "rustfmt"
@@ -63,6 +64,7 @@ dependencies = ["rustup-target-add"]
 [tasks.test]
 command = "cargo"
 args = ["test"]
+dependencies = ["rustup-target-add"]
 
 [tasks.ci]
 dependencies = [

@@ -18,22 +18,22 @@ asset() {
   cd "${previous}"
 }
 
-if [ -z ${EDERA_ASSEMBLE_FORM} ]; then
+if [ -z "${EDERA_ASSEMBLE_FORM}" ]; then
   echo "EDERA_ASSEMBLE_FORM env is missing"
   exit 1
 fi
 
-if [ -z ${EDERA_ASSEMBLE_TAG_NAME} ]; then
+if [ -z "${EDERA_ASSEMBLE_TAG_NAME}" ]; then
   echo "EDERA_ASSEMBLE_TAG_NAME env is missing"
   exit 1
 fi
 
-if [ -z ${EDERA_ASSEMBLE_PLATFORM} ]; then
+if [ -z "${EDERA_ASSEMBLE_PLATFORM}" ]; then
   echo "EDERA_ASSEMBLE_PLATFORM env is missing"
   exit 1
 fi
 
-if [ -z ${EDERA_ASSEMBLE_RELEASE_DIR} ]; then
+if [ -z "${EDERA_ASSEMBLE_RELEASE_DIR}" ]; then
   echo "EDERA_ASSEMBLE_RELEASE_DIR env is missing"
   exit 1
 fi
@@ -46,7 +46,7 @@ env | grep EDERA
 
 mkdir -p target/assets
 
-for SOURCE_FILE_PATH in "${EDERA_ASSEMBLE_RELEASE_DIR}"; do
+for SOURCE_FILE_PATH in ${EDERA_ASSEMBLE_RELEASE_DIR}; do
   echo "handling $SOURCE_FILE_PATH"
   if [ "${FORM}" = "hello" ]; then
     SUFFIX=""

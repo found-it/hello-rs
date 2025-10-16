@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  cache:
+  setup-cargo-make:
     name: setup-cargo-make
     runs-on: ubuntu-latest
     outputs:

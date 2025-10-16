@@ -51,9 +51,14 @@ script = '''
 echo $CARGO_BUILD_TARGET
 '''
 
+[tasks.rustup-target-add]
+command = "rustup"
+args = ["target", "add", "${CARGO_BUILD_TARGET}"]
+
 [tasks.build]
 command = "cargo"
 args = ["build", "@@split(HELLO_BUILD_FLAGS, )"]
+dependencies = ["rustup-target-add"]
 
 [tasks.test]
 command = "cargo"

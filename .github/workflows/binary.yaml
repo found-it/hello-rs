@@ -59,6 +59,8 @@ jobs:
         id: name
         run: |
           platform="${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}"
+          
+          # Adding -static to a musl binary name is redundant
           [ "${STATIC_BINARY}" = "true" && "${TARGET_LIBC}" != "musl" ] && platform="${platform}-static"
 
           echo "platform=$platform" >> $GITHUB_OUTPUT

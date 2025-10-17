@@ -59,7 +59,7 @@ jobs:
         id: name
         run: |
           platform="${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}"
-          [ "${STATIC_BINARY} = "true" ] && platform="${platform}-static"
+          [ "${STATIC_BINARY}" = "true" ] && platform="${platform}-static"
 
           echo "platform=$platform" >> $GITHUB_OUTPUT
 

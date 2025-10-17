@@ -18,12 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { os: linux, arch: x86_64, libc: musl, on: ubuntu-latest }
-        - { os: linux, arch: x86_64, libc: gnu, on: ubuntu-latest }
+        - { os: linux, arch: x86_64, libc: musl, static: true, on: ubuntu-latest }
+        - { os: linux, arch: x86_64, libc: gnu, static: true, on: ubuntu-latest }
+        - { os: linux, arch: x86_64, libc: gnu, static: false, on: ubuntu-latest }
     env:
       TARGET_OS: '${{ matrix.platform.os }}'
       TARGET_ARCH: '${{ matrix.platform.arch }}'
       TARGET_LIBC: '${{ matrix.platform.libc }}'
+      STATIC_BINARY: '${{ matrix.platform.static }}'
+      STATIC_BINARY_SUFFIX: ${{ matrix.platform.static == 'true' && '-static' || '' }}
     runs-on: '${{ matrix.platform.on }}'
     steps:
       - name: Checkout repository
@@ -40,6 +43,8 @@ jobs:
 
       - name: build
         run: cargo make --profile release build
+        env:
+          STATIC_BINARY: ${{ matrix.platform.static }}
 
       - name: 'Assemble hello-rs executable'
         run: |
@@ -47,14 +52,16 @@ jobs:
           [ -z $tag_name ] && tag_name='${{ github.event.repository.default_branch }}'
           export EDERA_ASSEMBLE_FORM='hello'
           export EDERA_ASSEMBLE_TAG_NAME="${tag_name}"
-          export EDERA_ASSEMBLE_PLATFORM='${{ matrix.platform.os }}-${{ matrix.platform.arch }}-${{ matrix.platform.libc }}'
+          export EDERA_ASSEMBLE_PLATFORM="${{ matrix.platform.os }}-${{ matrix.platform.arch }}-${{ matrix.platform.libc }}${STATIC_BINARY_SUFFIX}"
           export EDERA_ASSEMBLE_RELEASE_DIR='target/*/release'
           cargo make --profile release assemble-release-assets 
+        env:
+          STATIC_BINARY: ${{ matrix.platform.static }}
 
       - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
-          name: hello-${{ matrix.platform.os }}-${{ matrix.platform.arch }}-${{ matrix.platform.libc }}
+          name: hello-${{ matrix.platform.os }}-${{ matrix.platform.arch }}-${{ matrix.platform.libc }}${STATIC_BINARY_SUFFIX}
           path: |
             target/assets/*
 

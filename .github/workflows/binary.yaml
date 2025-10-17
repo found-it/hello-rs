@@ -59,7 +59,7 @@ jobs:
         id: name
         run: |
           platform="${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}"
-          [ "${STATIC_BINARY}" = "true" ] && platform="${platform}-static"
+          [ "${STATIC_BINARY}" = "true" && "${TARGET_LIBC}" != "musl" ] && platform="${platform}-static"
 
           echo "platform=$platform" >> $GITHUB_OUTPUT
 
@@ -73,8 +73,8 @@ jobs:
           export EDERA_ASSEMBLE_RELEASE_DIR='target/*/release'
           cargo make --profile release assemble-release-assets 
         env:
-          STATIC_BINARY: ${{ matrix.platform.static }}
-          EDERA_ASSEMBLE_PLATFORM: ${{ steps.name.outputs.platform }}
+          STATIC_BINARY: '${{ matrix.platform.static }}'
+          EDERA_ASSEMBLE_PLATFORM: '${{ steps.name.outputs.platform }}'
 
       - name: 'Upload hello to workflow run'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0

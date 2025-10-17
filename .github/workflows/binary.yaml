@@ -5,6 +5,16 @@ on:
     types:
     - published
 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - bin/**
+      - examples/**
+      - src/**
+      - Cargo.*
+      - rust-toolchain.toml
+
 permissions:
   contents: read
 
@@ -66,6 +76,7 @@ jobs:
             target/assets/*
 
       - name: 'Upload all release artifacts'
+        if: ${{ github.event_name == 'release' }}
         run: |
           export HELLO_TAG_NAME='${{ github.event.release.tag_name }}'
           cargo make --profile release upload-release-assets

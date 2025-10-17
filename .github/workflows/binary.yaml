@@ -46,6 +46,17 @@ jobs:
         env:
           STATIC_BINARY: ${{ matrix.platform.static }}
 
+<<<<<<< Updated upstream
+=======
+      - name: Fetch latest cargo-make version
+        id: name
+        run: |
+          platform="${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}"
+          [ "${STATIC_BINARY}" = "true" ] && platform="${platform}-static"
+
+          echo "platform=$platform" >> $GITHUB_OUTPUT
+
+>>>>>>> Stashed changes
       - name: 'Assemble hello-rs executable'
         run: |
           tag_name='${{ github.event.release.tag_name }}'
